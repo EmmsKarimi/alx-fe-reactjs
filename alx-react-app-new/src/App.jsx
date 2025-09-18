@@ -10,6 +10,8 @@ import MainContent from './MainContent';
 import Footer from './Footer';
 
 import UserProfile from './components/UserProfile';
+import Counter from './components/Counter'; // ✅ Import Counter
+
 
 
 function App() {
