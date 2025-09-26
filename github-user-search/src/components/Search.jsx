@@ -1,90 +1,123 @@
 import { useState } from "react";
-import { advancedUserSearch } from "../services/githubService";
+import { fetchUserData, searchUsers } from "../services/githubService";
 
-function Search() {
+const Search = () => {
   const [username, setUsername] = useState("");
   const [location, setLocation] = useState("");
   const [minRepos, setMinRepos] = useState("");
-  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState(null);
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleBasicSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(false);
-    setUsers([]);
-
+    setError("");
+    setUser(null);
     try {
-      const results = await advancedUserSearch({ username, location, minRepos });
-      setUsers(results);
+      const data = await fetchUserData(username); // ✅ still using fetchUserData
+      setUser(data);
     } catch (err) {
-      setError(true);
+      setError("Looks like we cant find the user");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAdvancedSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setResults([]);
+    try {
+      const data = await searchUsers({ username, location, minRepos });
+      setResults(data);
+    } catch (err) {
+      setError("Something went wrong with advanced search");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-lg p-6 space-y-4"
-      >
-        <h2 className="text-xl font-bold mb-2">GitHub User Search</h2>
+    <div className="p-6 max-w-xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4">GitHub User Search</h2>
 
+      {/* Basic Search */}
+      <form onSubmit={handleBasicSearch} className="mb-6">
         <input
           type="text"
-          placeholder="Enter username"
+          placeholder="Enter GitHub username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="w-full p-2 border rounded-md"
+          className="border px-3 py-2 rounded mr-2"
         />
-
-        <input
-          type="text"
-          placeholder="Filter by location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="w-full p-2 border rounded-md"
-        />
-
-        <input
-          type="number"
-          placeholder="Minimum repositories"
-          value={minRepos}
-          onChange={(e) => setMinRepos(e.target.value)}
-          className="w-full p-2 border rounded-md"
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-        >
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
           Search
         </button>
       </form>
 
-      <div className="mt-6">
-        {loading && <p>Loading...</p>}
-        {error && <p className="text-red-600">Looks like we cant find the user</p>}
+      {/* Advanced Search */}
+      <form onSubmit={handleAdvancedSearch} className="mb-6 space-y-2">
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="border px-3 py-2 rounded w-full"
+        />
+        <input
+          type="text"
+          placeholder="Location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="border px-3 py-2 rounded w-full"
+        />
+        <input
+          type="number"
+          placeholder="Min Repositories"
+          value={minRepos}
+          onChange={(e) => setMinRepos(e.target.value)}
+          className="border px-3 py-2 rounded w-full"
+        />
+        <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
+          Advanced Search
+        </button>
+      </form>
 
-        {users.length > 0 && (
+      {/* Status */}
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+
+      {/* Basic Search Result */}
+      {user && (
+        <div className="border p-4 rounded mb-4">
+          <img src={user.avatar_url} alt={user.login} className="w-16 h-16 rounded-full" />
+          <p className="font-bold">{user.login}</p>
+          <a
+            href={user.html_url}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-500"
+          >
+            View Profile
+          </a>
+        </div>
+      )}
+
+      {/* Advanced Search Results */}
+      {results.length > 0 && (
+        <div>
+          <h3 className="font-bold mb-2">Search Results:</h3>
           <ul className="space-y-4">
-            {users.map((user) => (
-              <li
-                key={user.id}
-                className="flex items-center space-x-4 p-4 border rounded-md shadow-sm"
-              >
-                <img
-                  src={user.avatar_url}
-                  alt={user.login}
-                  className="w-16 h-16 rounded-full"
-                />
+            {results.map((u) => (
+              <li key={u.id} className="border p-3 rounded flex items-center space-x-4">
+                <img src={u.avatar_url} alt={u.login} className="w-12 h-12 rounded-full" />
                 <div>
-                  <h3 className="font-bold text-lg">{user.login}</h3>
+                  <p className="font-bold">{u.login}</p>
                   <a
-                    href={user.html_url}
+                    href={u.html_url}
                     target="_blank"
                     rel="noreferrer"
                     className="text-blue-500"
@@ -95,10 +128,10 @@ function Search() {
               </li>
             ))}
           </ul>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default Search;
