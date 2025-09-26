@@ -10,8 +10,6 @@ function App() {
       </header>
       <main>
         <SearchBar />
-        <p>Project setup successful 🚀</p>
-        <p>Next step: Build components and integrate GitHub API</p>
       </main>
     </div>
   )
