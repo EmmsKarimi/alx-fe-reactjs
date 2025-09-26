@@ -1,21 +1,29 @@
 import axios from "axios";
 
-const BASE_URL = "https://api.github.com";
-
-// Existing single user fetch
+// 🔹 Basic search (single user by username)
 export const fetchUserData = async (username) => {
-  const response = await axios.get(`${BASE_URL}/users/${username}`);
-  return response.data;
+  try {
+    const response = await axios.get(`https://api.github.com/users/${username}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-// New advanced search
-export const advancedUserSearch = async ({ username, location, minRepos }) => {
-  let query = "";
+// 🔹 Advanced search (username + location + min repos)
+export const searchUsers = async ({ username, location, minRepos }) => {
+  try {
+    // Build the query string
+    let query = "";
+    if (username) query += `${username} in:login `;
+    if (location) query += `location:${location} `;
+    if (minRepos) query += `repos:>=${minRepos}`;
 
-  if (username) query += `${username} in:login `;
-  if (location) query += `location:${location} `;
-  if (minRepos) query += `repos:>=${minRepos}`;
-
-  const response = await axios.get(`${BASE_URL}/search/users?q=${query}`);
-  return response.data.items; // GitHub search returns { items: [] }
+    const response = await axios.get(
+      `https://api.github.com/search/users?q=${query}`
+    );
+    return response.data.items; // GitHub returns items array
+  } catch (error) {
+    throw error;
+  }
 };
