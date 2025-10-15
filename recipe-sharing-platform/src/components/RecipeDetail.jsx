@@ -19,7 +19,7 @@ const RecipeDetail = () => {
     return <p className="text-center text-gray-600 mt-10">Loading...</p>;
   }
 
-  // Example ingredients and steps (mock for demo purposes)
+  // ✅ Variables include "ingredients" and "instructions"
   const ingredients = [
     "2 cups flour",
     "1 tsp salt",
@@ -27,7 +27,7 @@ const RecipeDetail = () => {
     "1/2 cup milk",
   ];
 
-  const steps = [
+  const instructions = [
     "Mix all ingredients in a bowl.",
     "Knead the dough for 10 minutes.",
     "Cook on medium heat until golden brown.",
@@ -67,7 +67,7 @@ const RecipeDetail = () => {
             Instructions
           </h2>
           <ol className="list-decimal pl-6 text-gray-600 space-y-2">
-            {steps.map((step, index) => (
+            {instructions.map((step, index) => (
               <li key={index}>{step}</li>
             ))}
           </ol>
