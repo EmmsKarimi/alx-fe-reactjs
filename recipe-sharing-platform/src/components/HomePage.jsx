@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // ✅ required import
+import { Link } from "react-router-dom";
 import recipesData from "../data.json";
 
 const HomePage = () => {
@@ -15,13 +15,23 @@ const HomePage = () => {
         Recipe Sharing Platform
       </h1>
 
+      {/* ✅ Add New Recipe Button */}
+      <div className="text-center mb-8">
+        <Link
+          to="/add-recipe"
+          className="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-2 rounded-md transition duration-300"
+        >
+          Add New Recipe
+        </Link>
+      </div>
+
+      {/* ✅ Responsive Recipe Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {recipes.map((recipe) => (
           <div
             key={recipe.id}
-            className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
+            className="bg-white rounded-lg shadow-md hover:shadow-xl transition-transform duration-300 hover:scale-105"
           >
-            {/* ✅ Use Link for navigation */}
             <Link to={`/recipe/${recipe.id}`}>
               <img
                 src={recipe.image}
