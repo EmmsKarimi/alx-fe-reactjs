@@ -1,5 +1,5 @@
-const ProfileDetails = () => {
-    return <div><h3>Profile Details Section</h3></div>;
-  };
-  export default ProfileDetails;
-  
+// src/components/ProfileSettings.jsx
+const ProfileSettings = () => {
+  return <h3>Profile Settings Section</h3>;
+};
+export default ProfileSettings;
